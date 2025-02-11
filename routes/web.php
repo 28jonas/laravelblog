@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BlogpostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -14,6 +15,7 @@ Route::get('/roles', function () {
 });
 
 Route::resource('/backend/users', UserController::class);
+Route::resource('/backend/posts', BlogpostController::class);
 
 
 Route::get('/dashboard', function () {
