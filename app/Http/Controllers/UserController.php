@@ -19,7 +19,7 @@ class UserController extends Controller
     public function index()
     {
         //
-        $users = User::paginate(10);
+        $users = User::with('roles')->orderBy('id', 'desc')->paginate(10);
         $roles = Role::all();
         return view('backend.users.index', compact("users", "roles"));
     }
@@ -30,7 +30,7 @@ class UserController extends Controller
     public function create()
     {
         //
-        $roles= Role::pluck('name', 'id')->all();
+        $roles = Role::pluck('name', 'id')->all();
         return view('backend.users.create', compact('roles'));
     }
 
@@ -47,7 +47,9 @@ class UserController extends Controller
             'email.unique' => 'Dit e-mailadres is al in gebruik.',
             'password.required' => 'Het wachtwoord is verplicht.',
             'password.min' => 'Het wachtwoord moet minimaal :min tekens bevatten.',
-            'role_id.required' => 'Selecteer een rol voor de gebruiker.',
+            'role_id.required' => 'Selecteer minimaal een rol voor de gebruiker.',
+            'role_id.*.exists' => '1 van de geselecteerde rollen bestaat niet.',
+            'role_id.array' => 'De rollen moeten een lijst van ID\'s zijn.',
             'is_active.required' => 'Selecteer of de gebruiker actief is.',
             'photo_id.image' => 'De geüploade afbeelding moet een geldig afbeeldingsbestand zijn.',
         ];
@@ -55,17 +57,24 @@ class UserController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'role_id' => 'required|exists:roles,id',
+            'role_id' => 'required|array|exists:roles,id',
             'is_active' => 'required|in:0,1',
-            'password'=>'required|min:6',
+            'password' => 'required|min:6',
             /*'photo_id' => 'nullable|image'*/
-        ],$messages);
+        ], $messages);
 
         /*passwoord hashen*/
-        $validatedData['password']=bcrypt($validatedData['password']);
+        $validatedData['password'] = bcrypt($validatedData['password']);
 
         /*Gebruikers aanmaken*/
-        User::create($validatedData);
+        $user = User::create([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'is_active' => $validatedData['is_active'],
+            'password' => $validatedData['password'],
+        ]);
+        //sync doet detach en daarna een attach in 1 keer
+        $user->roles()->sync($validatedData['role_id']);
 
         /*redirect naar users*/
         return redirect()->route('users.index')->with('message', 'User created successfully');
