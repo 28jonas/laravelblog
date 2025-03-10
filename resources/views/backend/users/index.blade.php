@@ -31,6 +31,8 @@
                     <th>Active</th>
                     <th>Created</th>
                     <th>Update</th>
+                    <th>Deleted</th>
+                    <th>knop</th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -43,6 +45,8 @@
                     <th>Active</th>
                     <th>Created</th>
                     <th>Update</th>
+                    <th>Deleted</th>
+                    <th>knop</th>
                 </tr>
                 </tfoot>
                 <tbody>
@@ -51,7 +55,18 @@
                     @foreach($users as $user)
                         <tr>
                             <td>{{$user->id}}</td>
-                            <td>{{$user->photo_id}}</td>
+                            <td>
+                                @if($user->photo && file_exists(public_path('assets/img/'.$user->photo->path)))
+                                    <img
+                                        src="{{asset('assets/img/'.$user->photo->path)}}"
+                                        alt="{{$user->photo->alternate_text ?? $user->name}}"
+                                        class="img-fluid rounded object-fit-cover"
+                                        style="width: 40px; height: 40px;">
+                                @else
+                                    <img src="https://placehold.co/40" alt="No image" class="img-fluid rounded object-fit-cover"
+                                         style="width: 40px; height: 40px;">
+                                @endif
+                            </td>
                             <td>{{$user->name}}</td>
                             <td>{{$user->email}}</td>
                             <td>
@@ -69,6 +84,30 @@
                             </td>
                             <td>{{$user->created_at->diffForHumans()}}</td>
                             <td>{{$user->updated_at->diffForHumans()}}</td>
+                            <td>{{$user->deleted_at ? $user->deleted_at->diffForHumans() : 'Not Deleted'}}</td>
+                            <td>
+                                <a href="{{route('users.edit', $user->id)}}" class="btn btn-info btn-sm" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                @if($user->trashed())
+                                    <form method="POST" action="{{action('App\Http\Controllers\UserController@restore', $user->id)}}" style="display: inline">
+                                        @csrf @method('PATCH')
+                                        <button type="submit" class="btn btn-success btn-sm" title="Restore User">
+                                            <i class="fas fa-undo"></i>">
+                                        </button>
+                                    </form>
+                                @else
+                                    <form method="POST" action="{{route('users.destroy', $user->id)}}" style="display: inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" title="Delete User">
+                                            <i class="fas fa-trash"></i>">
+                                        </button>
+                                    </form>
+                                @endif
+                            </td>
+                            {{--edit button--}}
+
+
                         </tr>
                     @endforeach
                 @endif
@@ -127,6 +166,27 @@
                         </td>
                         <td>{{$user->created_at->diffForHumans()}}</td>
                         <td>{{$user->updated_at->diffForHumans()}}</td>
+                        <td>{{$user->deleted_at ? $user->deleted_at->diffForHumans() : 'Not Deleted'}}</td>
+                        <td>
+                            <a href="{{route('users.edit', $user->id)}}" class="btn btn-info btn-sm" title="Edit User">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            @if($user->trashed())
+                                <form method="POST" action="{{action('App\Http\Controllers\UserController@restore', $user->id)}}" style="display: inline">
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="btn btn-success btn-sm" title="Restore User">
+                                        <i class="fas fa-undo"></i>
+                                    </button>
+                                </form>
+                            @else
+                                <form method="POST" action="{{route('users.destroy', $user->id)}}" style="display: inline">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" title="Delete User">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             @endif

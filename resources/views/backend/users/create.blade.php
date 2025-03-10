@@ -11,7 +11,7 @@
         <div>
             @include("layouts.partials.form_error")
         </div>
-        <form action="{{action('\App\Http\Controllers\UserController@store')}}" method="POST"  >
+        <form action="{{action('\App\Http\Controllers\UserController@store')}}" method="POST" enctype="multipart/form-data"   >
             @csrf
             <div class="form-group">
                 <label for="name">Name:</label>
