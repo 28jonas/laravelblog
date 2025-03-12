@@ -2,7 +2,12 @@
 @section('title')
     Create a User
 @endsection
-
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('backend.index') }}">Home</a></li>
+    <li class="breadcrumb-item active"><a href="{{ route('backend.index') }}">Backend</a></li>
+    <li class="breadcrumb-item active"><a href="{{ route('users.index') }}">Users</a></li>
+    <li class="breadcrumb-item active">Create User</li>
+@endsection
 
 @section('charts')
 @endsection()

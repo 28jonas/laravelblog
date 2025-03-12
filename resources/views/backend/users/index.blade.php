@@ -3,8 +3,11 @@
 @section('title')
     Users
 @endsection
-
-
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('backend.index') }}">Home</a></li>
+    <li class="breadcrumb-item active"><a href="{{ route('backend.index') }}">Backend</a></li>
+    <li class="breadcrumb-item active">Users</li>
+@endsection
 @section('charts')
 @endsection()
 @section('content')
@@ -14,12 +17,37 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    <div>
+        <form method="GET" action="{{route('users.index')}}" class="mb-3">
+            <div class="row g-3">
+                {{-- zoekveld--}}
+                <div class="col-md-4">
+                    <label for="search" class="form-label fw-bold">
+                        Search by Title or Content
+                    </label>
+                    <input type="text" name="search" id="search" class="form-control"
+                           placeholder="Enter Keyword..." value="{{request('search')}}">
+                </div>
+                {{--filter en resetknop--}}
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">
+                        <i class="fas fa-filter"></i> Filter
+                    </button>
+                    <a href="{{ route('users.index') }}" class="btn btn-secondary">
+                        <i class="fas fa-sync-alt"></i> Reset
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <div class="card mb-4">
         <div class="card-header">
             <i class="fas fa-table me-1"></i>
-            DataTable Example
+            DataTable Users
         </div>
         <div class="card-body">
+            <p class="text-muted">Showing {{ $users->total() > 0 ? $users->count() : 0 }} of {{ $users->total() }} Users</p>
             <table id="datatablesSimple">
                 <thead>
                 <tr>
@@ -93,7 +121,7 @@
                                     <form method="POST" action="{{action('App\Http\Controllers\UserController@restore', $user->id)}}" style="display: inline">
                                         @csrf @method('PATCH')
                                         <button type="submit" class="btn btn-success btn-sm" title="Restore User">
-                                            <i class="fas fa-undo"></i>">
+                                            <i class="fas fa-undo"></i>
                                         </button>
                                     </form>
                                 @else
@@ -114,20 +142,21 @@
 
                 </tbody>
             </table>
+            {!! $users->appends(request()->except('page'))->render() !!}
         </div>
     </div>
     <div class="card mb-4">
         <table class="table table-striped">
             <thead>
             <tr>
-                <th>id</th>
+                <th>@sortablelink('id', 'Id')</th>
                 <th>Photo</th>
-                <th>Name</th>
-                <th>E-mail</th>
+                <th>@sortablelink('name', 'Name')</th>
+                <th>@sortablelink('email', 'E-mail')</th>
                 <th>Role</th>
                 <th>Active</th>
-                <th>Created</th>
-                <th>Update</th>
+                <th>@sortablelink('created_at', 'Created')</th>
+                <th>@sortablelink('updated_at', 'Update')</th>
             </tr>
             </thead>
             <tfoot>

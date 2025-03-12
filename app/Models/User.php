@@ -66,5 +66,14 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles()->where('name', $role)->exists();
     }
 
+    public function scopeFilter($query, $searchterm)
+    {
+        if(!empty($searchterm)){
+            $query->where(function ($q) use ($searchterm) {
+                $q->where('name', 'like', "%{$searchterm}%")
+                    ->orWhere('email', 'like', "%{$searchterm}%");
+            });
+        }
+    }
 
 }

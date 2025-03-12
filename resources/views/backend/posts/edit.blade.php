@@ -10,7 +10,7 @@
         {{--@include('layouts.partials.flash_message')--}}
         <h1 class="h3 mb-4">Post Bewerken</h1>
         <!-- Update Form -->
-        <form id="updateForm" method="POST" action="{{ route('posts.update', $post->id) }}" enctype="multipart/form-data">
+        <form id="updateForm" method="POST" action="{{ route('posts.update', $post) }}" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
             <div class="row">

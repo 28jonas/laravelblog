@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\PostCreated;
 use App\Models\Category;
 use App\Models\Photo;
 use App\Models\Post;
@@ -23,8 +24,19 @@ class PostController extends Controller
     public function index()
     {
         //
-        $posts = Post::with(['author', 'photo', 'categories'])->latest()->paginate(5);
-        return view('backend.posts.index', compact('posts'));
+        $search = request('search');
+        $categoryIds = request('category_ids', []);
+
+
+        $posts = Post::with(['author', 'photo', 'categories'])
+            ->published()
+            ->filter($search)
+            ->inCategories($categoryIds)
+            ->sortable()
+            ->paginate(5)
+            ->appends(request()->query()); // append the query string to the pagination links
+        $categories = Category::pluck('name', 'id');
+        return view('backend.posts.index', compact('posts', 'categories'));
     }
 
     /**
@@ -45,8 +57,6 @@ class PostController extends Controller
         //
         $validated=$request->validated();
 
-
-
         $validated['slug'] = Str::slug($validated['title']);
         $validated['author_id'] = auth()->user()->id;
 
@@ -62,6 +72,10 @@ class PostController extends Controller
 
         $post = Post::create($validated);
         $post->categories()->sync($request->categories);
+
+        //
+        PostCreated::dispatch($post);
+
         return redirect()->route('posts.index')->with('message', 'Post created successfully');
     }
 

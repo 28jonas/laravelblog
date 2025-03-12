@@ -123,5 +123,9 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*Maak providers aan*/
+    'providers' => [
+        App\Providers\GlobalDataServiceProvider::class
+    ]
 
 ];

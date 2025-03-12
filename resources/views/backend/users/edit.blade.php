@@ -2,6 +2,12 @@
 @section('title')
     Edit User
 @endsection
+@section('breadcrumb')
+    <li class="breadcrumb-item"><a href="{{ route('backend.index') }}">Home</a></li>
+    <li class="breadcrumb-item active"><a href="{{ route('backend.index') }}">Backend</a></li>
+    <li class="breadcrumb-item active">User</li>
+    <li class="breadcrumb-item active">Update User</li>
+@endsection
 @section('cards')
 @endsection
 @section('charts')

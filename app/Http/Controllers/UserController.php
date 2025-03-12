@@ -29,7 +29,13 @@ class UserController extends Controller
     {
         //
         $this->authorize('ViewAdminPanel', User::class);
-        $users = User::withTrashed()->with(['roles', 'photo'])->orderBy('id', 'desc')->paginate(10);
+        $search = request('search');
+
+        $users = User::withTrashed()
+            ->filter($search)
+            ->with(['roles', 'photo'])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
         return view('backend.users.index', compact("users"));
     }
 

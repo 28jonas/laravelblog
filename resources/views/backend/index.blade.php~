@@ -1,4 +1,4 @@
 @extends('layouts.backend')
 @section('title')
-    Dashboard Laravel
+    Laravel
 @endsection
