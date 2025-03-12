@@ -87,7 +87,6 @@ class PostController extends Controller
         //
         return view('backend.posts.show', compact('post'));
     }
-
     /**
      * Show the form for editing the specified resource.
      */
@@ -97,7 +96,6 @@ class PostController extends Controller
         $categories = Category::pluck('name', 'id');
         return view('backend.posts.edit', compact('post', 'categories'));
     }
-
     /**
      * Update the specified resource in storage.
      */

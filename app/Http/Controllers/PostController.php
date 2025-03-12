@@ -78,7 +78,6 @@ class PostController extends Controller
 
         return redirect()->route('posts.index')->with('message', 'Post created successfully');
     }
-
     /**
      * Display the specified resource.
      */
