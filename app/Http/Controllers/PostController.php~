@@ -57,8 +57,6 @@ class PostController extends Controller
         //
         $validated=$request->validated();
 
-
-
         $validated['slug'] = Str::slug($validated['title']);
         $validated['author_id'] = auth()->user()->id;
 
