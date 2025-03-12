@@ -66,6 +66,10 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->roles()->where('name', $role)->exists();
     }
 
+    public function orders(){
+        return $this->hasMany(Order::class, 'order_id');
+    }
+
     public function scopeFilter($query, $searchterm)
     {
         if(!empty($searchterm)){

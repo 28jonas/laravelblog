@@ -42,7 +42,11 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth', 'admin', 'verified
     Route::delete('/categories/{id}/forceDelete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
 
     //notification route
-
+    Route::patch('/notifications/{id}/read', function ($id) {
+        $notification = auth()->user()->notifications()->findOrFail($id);
+        $notification->markAsRead();
+        return back()->with('message', 'Notification marked as read.');
+    })->name('notifications.markAsRead');
 });
 
 

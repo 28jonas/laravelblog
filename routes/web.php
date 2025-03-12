@@ -3,6 +3,7 @@
 use App\Http\Controllers\BackendController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth', 'admin', 'verified
     Route::resource('/categories', CategoryController::class);
     Route::patch('/categories/{id}/restore', [CategoryController::class, 'restore'])->name('categories.restore');
     Route::delete('/categories/{id}/forceDelete', [CategoryController::class, 'forceDelete'])->name('categories.forceDelete');
+
+    /*orders*/
+    Route::resource('/orders', OrderController::class);
 
     //notification route
     Route::patch('/notifications/{id}/read', function ($id) {
