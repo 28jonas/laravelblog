@@ -19,9 +19,7 @@ class PhotoProductSeeder extends Seeder
         $photos = Photo::factory(30)->create();
 
         $products->each(function($product) use ($photos){
-            $product->photos()->attach(
-                $photos->random(rand(1, min(5, $photos->count())))->pluck('id')->toArray()
-            );
+            $product->photos()->attach($photos->random(rand(1, min(5, $photos->count()))))->pluck('id')->toArray();
         });
     }
 }
