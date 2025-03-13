@@ -31,9 +31,11 @@
                             @foreach(auth()->user()->unreadNotifications as $notification)
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="{{ $notification->data['url'] }}">
-                                        New post: <strong>{{ $notification->data['title'] }}</strong> by {{ $notification->data['author'] }}
+                                        New post: <strong>{{ $notification->data['title'] }}</strong>
+                                        by {{ $notification->data['author'] }}
                                     </a>
-                                    <form method="POST" action="{{ route('notifications.markAsRead', $notification->id) }}">
+                                    <form method="POST"
+                                          action="{{ route('notifications.markAsRead', $notification->id) }}">
                                         @csrf
                                         @method('PATCH')
                                         <button type="submit" class="btn btn-sm btn-secondary">Mark as Read</button>
@@ -70,10 +72,12 @@
                                     <div class="d-flex flex-wrap">
                                         @foreach($categories as $id => $name)
                                             <div class="form-check me-3">
-                                                <input type="checkbox" name="category_ids[]" value="{{ $id }}" id="category-{{ $id }}"
+                                                <input type="checkbox" name="category_ids[]" value="{{ $id }}"
+                                                       id="category-{{ $id }}"
                                                        class="form-check-input"
                                                     {{ in_array($id, request('category_ids', [])) ? 'checked' : '' }}>
-                                                <label for="category-{{ $id }}" class="form-check-label">{{ $name }}</label>
+                                                <label for="category-{{ $id }}"
+                                                       class="form-check-label">{{ $name }}</label>
                                             </div>
                                         @endforeach
                                     </div>
@@ -96,7 +100,8 @@
         <div class="card mb-4">
             <div class="card-header"><i class="fas fa-table me-1"></i> Overzicht van Posts</div>
             <div class="card-body">
-                <p class="text-muted">Showing {{ $posts->total() > 0 ? $posts->count() : 0 }} of {{ $posts->total() }} posts</p>
+                <p class="text-muted">Showing {{ $posts->total() > 0 ? $posts->count() : 0 }} of {{ $posts->total() }}
+                    posts</p>
                 <table class="table table-striped">
                     <thead>
                     <tr>
@@ -106,7 +111,10 @@
                         <th>@sortablelink('author.name', 'Author')</th>
                         <th>Gepubliceerd</th>
                         <th>Categorieën</th>
-                        <th>@sortablelink('created_at', 'Aangemaakt')</th>
+                        <th>
+                            @sortablelink('created_at', 'Aangemaakt')
+
+                        </th>
                         <th>@sortablelink('updated_at', 'Bewerkt')</th>
                         <th>Acties</th>
                     </tr>
@@ -121,6 +129,7 @@
                         <th>Categorieën</th>
                         <th>Aangemaakt</th>
                         <th>Bewerkt</th>
+
                         <th>Acties</th>
                     </tr>
                     </tfoot>
@@ -153,8 +162,21 @@
                                     <span class="badge bg-info">{{ $category->name }}</span>
                                 @endforeach
                             </td>
-                            <td>{{ $post->created_at->diffForHumans() }}</td>
-                            <td>{{ $post->updated_at->diffForHumans() }}</td>
+                            <td>
+
+                                {{ $post->created_at->diffForHumans() }}
+                                <br>
+                                {{$post->creator->name ?? 'Onbekend'}}
+
+                            </td>
+                            <td>
+
+                                {{ $post->updated_at->diffForHumans() }}
+                                <br>
+                                {{$post->editor->name ??'Onbekend'}}
+
+
+                            </td>
                             <td class="align-middle">
                                 <div class="d-flex gap-2">
                                     <a href="{{ route('posts.show', $post) }}"
@@ -170,7 +192,8 @@
                                         </a>
                                     @endcan
                                     @can('delete', $post)
-                                        <form method="POST" action="{{ route('posts.destroy', $post) }}" style="display:inline;">
+                                        <form method="POST" action="{{ route('posts.destroy', $post) }}"
+                                              style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"

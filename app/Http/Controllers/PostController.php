@@ -28,7 +28,7 @@ class PostController extends Controller
         $categoryIds = request('category_ids', []);
 
 
-        $posts = Post::with(['author', 'photo', 'categories'])
+        $posts = Post::with(['author.roles', 'photo', 'categories'])
             ->published()
             ->filter($search)
             ->inCategories($categoryIds)
