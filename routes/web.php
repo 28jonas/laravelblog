@@ -5,6 +5,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use App\Models\User;
@@ -44,6 +45,9 @@ Route::group(['prefix' => 'backend', 'middleware' => ['auth', 'admin', 'verified
 
     /*orders*/
     Route::resource('/orders', OrderController::class);
+
+    /*Products*/
+    Route::resource('/products', ProductController::class);
 
     //notification route
     Route::patch('/notifications/{id}/read', function ($id) {

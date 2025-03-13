@@ -48,6 +48,17 @@
                             <a class="nav-link" href="500.html">500 Page</a>
                         </nav>
                     </div>
+                    <a class="nav-link collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#pagesCollapseProduct" aria-expanded="false" aria-controls="pagesCollapseProduct">
+                        Products
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="pagesCollapseProduct" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordionPages">
+                        <nav class="sb-sidenav-menu-nested nav">
+                            <a class="nav-link" href="{{route('products.index')}}">All Products</a>
+                            <a class="nav-link" href="404.html">404 Page</a>
+                            <a class="nav-link" href="500.html">500 Page</a>
+                        </nav>
+                    </div>
                 </nav>
             </div>
             <div class="sb-sidenav-menu-heading">Addons</div>
