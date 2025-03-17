@@ -11,10 +11,7 @@ use Illuminate\Support\Facades\Route;
 /* frontend routes */
 
 Route::get('/', [HomeController::class, 'index'])->name('frontend.home');
-
-Route::get('/single-post', function () {
-    return view('frontend.single-post');
-})->name('frontend.single-post');
+Route::get('/single-post')->name('frontend.single-post');
 
 Route::get('/contact', [ContactController::class, 'create'])->name('contact.create');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');

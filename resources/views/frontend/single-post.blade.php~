@@ -1,0 +1,4 @@
+<x-frontend.layout>
+    <x-frontend.content.post.post-layout></x-frontend.content.post.post-layout>
+    <x-frontend.content.post.post-comment></x-frontend.content.post.post-comment>
+</x-frontend.layout>
