@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Order;
 use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class OrderProductSeeder extends Seeder
@@ -15,11 +14,15 @@ class OrderProductSeeder extends Seeder
     public function run(): void
     {
         //
-        $orders = Order::factory(10)->create();
-        $products = Product::factory(10)->create();
+        $orders = Order::all();
 
-        $orders->each(function($order) use ($products){
-            $order->products()->attach($products->random(rand(1, min(5, $products->count())))->pluck('id')->toArray());
+        if ($orders->isEmpty()) {
+            $orders = Order::factory(10)->create();
+        }
+
+        $orders->each(function ($order) {
+            $randomProductsIds = Product::inRandomOrder()->limit(rand(1, 5))->pluck('id')->toArray();
+            $order->products()->attach($randomProductsIds);
         });
     }
 }

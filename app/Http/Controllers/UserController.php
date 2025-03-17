@@ -8,7 +8,6 @@ use App\Models\Photo;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,8 +15,10 @@ use Illuminate\Support\Str;
 class UserController extends Controller
 {
     use AuthorizesRequests;
+
     protected $folder = 'users';
-    //Methode 1 om beveiliging te krijgen voor backend (met constructor)
+
+    // Methode 1 om beveiliging te krijgen voor backend (met constructor)
     /*public function __construct()
     {
         $this->middleware('auth');
@@ -36,7 +37,8 @@ class UserController extends Controller
             ->with(['roles', 'photo'])
             ->orderBy('id', 'desc')
             ->paginate(10);
-        return view('backend.users.index', compact("users"));
+
+        return view('backend.users.index', compact('users'));
     }
 
     /**
@@ -46,6 +48,7 @@ class UserController extends Controller
     {
         //
         $roles = Role::pluck('name', 'id')->all();
+
         return view('backend.users.create', compact('roles'));
     }
 
@@ -56,19 +59,18 @@ class UserController extends Controller
     {
         //
 
-
         $validatedData = $request->validated();
 
-        /*passwoord hashen*/
+        /* passwoord hashen */
         $validatedData['password'] = Hash::make($validatedData['password']);
 
-        /*Controleerd of er een foto is geüpload en sla deze op*/
+        /* Controleerd of er een foto is geüpload en sla deze op */
         if ($request->hasFile('photo_id')) {
             $file = $request->file('photo_id');
-            $uniqueName = Str::uuid() . '.' . $file->getClientOriginalExtension();
-            $filePath = $this->folder . '/' . $uniqueName;
+            $uniqueName = Str::uuid().'.'.$file->getClientOriginalExtension();
+            $filePath = $this->folder.'/'.$uniqueName;
 
-            /*Opslaan in het public path users*/
+            /* Opslaan in het public path users */
             $file->storeAs('', $filePath, 'public');
             $photo = Photo::create([
                 'path' => $filePath,
@@ -77,7 +79,7 @@ class UserController extends Controller
             $validatedData['photo_id'] = $photo->id;
         }
 
-        /*Gebruikers aanmaken*/
+        /* Gebruikers aanmaken */
         $user = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
@@ -85,10 +87,10 @@ class UserController extends Controller
             'password' => $validatedData['password'],
             'photo_id' => $validatedData['photo_id'],
         ]);
-        //sync doet detach en daarna een attach in 1 keer
+        // sync doet detach en daarna een attach in 1 keer
         $user->roles()->sync($validatedData['role_id']);
 
-        /*redirect naar users*/
+        /* redirect naar users */
         return redirect()->route('users.index')->with('message', 'User created successfully');
     }
 
@@ -105,7 +107,7 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-       /* $user = User::with('roles', 'photo')->findOrFail($id);*/
+        /* $user = User::with('roles', 'photo')->findOrFail($id); */
         $user->load('roles', 'photo');
 
         $roles = Role::pluck('name', 'id')->all();
@@ -119,6 +121,7 @@ class UserController extends Controller
             $photoDetails['height'] = $dimensions[1] ?? 'N/A';
             $photoDetails['extension'] = Str::upper(pathinfo($user->photo->path, PATHINFO_EXTENSION));
         }
+
         return view('backend.users.edit', compact('user', 'roles', 'photoDetails'));
     }
 
@@ -131,20 +134,19 @@ class UserController extends Controller
         $validatedData = $request->validated();
 
         // Verwerk het wachtwoord: als er een nieuw wachtwoord is ingevuld, hash deze; anders laat je de oude waarde intact.
-        if (!empty($validatedData['password'])) {
+        if (! empty($validatedData['password'])) {
             $validatedData['password'] = Hash::make($validatedData['password']);
         } else {
             unset($validatedData['password']);
         }
 
-
         // Verwerk de foto: als er een nieuwe foto is geüpload
         if ($request->hasFile('photo_id')) {
             $file = $request->file('photo_id');
             // Genereer een unieke bestandsnaam met behulp van een UUID
-            $uniqueName = Str::uuid() . '.' . $file->getClientOriginalExtension();
+            $uniqueName = Str::uuid().'.'.$file->getClientOriginalExtension();
             // Gebruik de class-property (bijv. 'users') en bouw het bestandspad op als 'users/uniquename.ext'
-            $filePath = $this->folder . '/' . $uniqueName;
+            $filePath = $this->folder.'/'.$uniqueName;
             // Sla het bestand op in de 'public'-disk (die verwijst naar storage/app/public)
             $file->storeAs('', $filePath, 'public');
             // Controleer of de gebruiker al een foto-record heeft
@@ -153,16 +155,16 @@ class UserController extends Controller
                 Storage::disk('public')->delete($user->photo->path);
                 // Update het bestaande Photo-record met de nieuwe bestandsnaam en alternate text
                 $user->photo->update([
-                    'path'          => $filePath,
-                    'alternate_text' => $validatedData['name']
+                    'path' => $filePath,
+                    'alternate_text' => $validatedData['name'],
                 ]);
                 // Gebruik hetzelfde photo record id
                 $validatedData['photo_id'] = $user->photo->id;
             } else {
                 // Als er nog geen foto-record is, maak er dan een nieuw aan
                 $photo = Photo::create([
-                    'path'          => $filePath,
-                    'alternate_text' => $validatedData['name']
+                    'path' => $filePath,
+                    'alternate_text' => $validatedData['name'],
                 ]);
                 $validatedData['photo_id'] = $photo->id;
             }
@@ -171,6 +173,7 @@ class UserController extends Controller
         $user->update($validatedData);
         // Synchroniseer de rollen voor de gebruiker
         $user->roles()->sync($validatedData['role_id']);
+
         return redirect()->back()->with('message', 'User updated successfully');
     }
 
@@ -179,12 +182,12 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //delete van een user
-        /*$user = User::with('photo')->findOrFail($id);*/
-    $user->load('photo');
+        // delete van een user
+        /* $user = User::with('photo')->findOrFail($id); */
+        $user->load('photo');
 
-        /*contolleerd of het fysieke bestand bestaat*/
-        if(Storage::disk('public')->exists($user->photo->path)){
+        /* contolleerd of het fysieke bestand bestaat */
+        if (Storage::disk('public')->exists($user->photo->path)) {
             Storage::disk('public')->delete($user->photo->path);
         }
 
@@ -193,6 +196,7 @@ class UserController extends Controller
             $user->photo->delete();
         }*/
         $user->delete();
+
         return redirect()->route('users.index')->with('message', 'User deleted successfully');
     }
 
@@ -200,6 +204,7 @@ class UserController extends Controller
     {
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
+
         return redirect()->back()->with('message', 'User restored successfully');
     }
 }

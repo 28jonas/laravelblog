@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Photo;
 use App\Models\Product;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PhotoProductSeeder extends Seeder
@@ -15,13 +14,15 @@ class PhotoProductSeeder extends Seeder
     public function run(): void
     {
 
-        $products = Product::factory(10)->create();
-        $photos = Photo::factory(30)->create();
+        $products = Product::all();
 
-        $products->each(function($product) use ($photos){
-            $product->photos()->attach(
-                $photos->random(rand(1, min(5, $photos->count())))->pluck('id')->toArray()
-            );
+        if ($products->isEmpty()) {
+            $products = Product::factory(10)->create();
+        }
+
+        $products->each(function ($product) {
+            $randomPhotoIds = Photo::inRandomOrder()->limit(rand(1, 5))->pluck('id')->toArray();
+            $product->photos()->attach($randomPhotoIds);
         });
     }
 }

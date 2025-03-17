@@ -10,15 +10,15 @@ class Photo extends Model
     /** @use HasFactory<\Database\Factories\PhotoFactory> */
     use HasFactory;
 
-    protected $fillable=['path', 'alternate_text'];
+    protected $fillable = ['path', 'alternate_text'];
 
     public function user()
     {
         return $this->hasOne(User::class, 'photo_id');
     }
 
-    public function products(){
+    public function products()
+    {
         return $this->belongsToMany(Product::class, 'photo_product', 'photo_id', 'product_id');
     }
-
 }

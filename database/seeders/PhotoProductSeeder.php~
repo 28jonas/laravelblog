@@ -16,10 +16,10 @@ class PhotoProductSeeder extends Seeder
     {
 
         $products = Product::factory(10)->create();
-        $photos = Photo::factory(30)->create();
 
-        $products->each(function($product) use ($photos){
-            $product->photos()->attach($photos->random(rand(1, min(5, $photos->count()))))->pluck('id')->toArray();
+        $products->each(function($product){
+            $randomPhotoIds = Photo::inRandomOrder()->limit(rand(1,5))->pluck('id')->toArray();
+            $product->photos()->attach($randomPhotoIds);
         });
     }
 }

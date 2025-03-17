@@ -7,11 +7,11 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    use SoftDeletes, AuthorizesRequests;
+    use AuthorizesRequests, SoftDeletes;
+
     /**
      * Display a listing of the resource.
      */
@@ -19,6 +19,7 @@ class CategoryController extends Controller
     {
         // blade $categories -> posts_count
         $categories = Category::withCount('posts')->withTrashed()->paginate(3);
+
         return view('backend.categories.index', compact('categories'));
     }
 
@@ -37,7 +38,8 @@ class CategoryController extends Controller
     public function store(StoreCategoryRequest $request)
     {
         //
-        Category::create([$request -> validated()]);
+        Category::create($request->validated());
+
         return redirect()->route('categories.index')->with('message', 'Category created successfully');
     }
 
@@ -65,7 +67,8 @@ class CategoryController extends Controller
     {
         //
         $this->authorize('update', $category);
-        Category::update([$request -> validated()]);
+        $category->update($request->validated());
+
         return redirect()->route('categories.index')->with('message', 'Category updated successfully');
     }
 
@@ -77,23 +80,28 @@ class CategoryController extends Controller
         //
         $this->authorize('delete', $category);
         $category->delete();
-        return redirect()->with('message', 'Category deleted successfully');
+
+        return back()->with('message', 'Category deleted successfully');
     }
 
-    public function restore($id){
+    public function restore($id)
+    {
         $category = Category::withTrashed()->findOrFail($id);
         $this->authorize('restore', $category);
         $category->restore();
+
         return back()->with('message', 'Category restored successfully');
     }
 
-    public function forceDelete($id){
+    public function forceDelete($id)
+    {
         $category = Category::withTrashed()->findOrFail($id);
         $this->authorize('forceDelete', $category);
-        if($category->posts()->exists()) {
+        if ($category->posts()->exists()) {
             return back()->with('message', 'Category can not be deleted because it has posts');
         }
         $category->forceDelete();
+
         return back()->with('message', 'Category deleted permanently');
     }
 }
